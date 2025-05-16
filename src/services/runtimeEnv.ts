@@ -2,6 +2,8 @@ interface AppRuntimeEnv {
   VITE_AWS_REGION?: string;
   VITE_S3_BUCKET_NAME?: string;
   VITE_GOOGLE_CLIENT_ID?: string;
+  VITE_AWS_ACCESS_KEY_ID?: string;
+  VITE_AWS_SECRET_ACCESS_KEY?: string;
   // Define other environment variables that the frontend will fetch
 }
 
@@ -28,12 +30,18 @@ async function fetchRuntimeEnvFromServer(): Promise<AppRuntimeEnv> {
     })
     .then(data => {
       // Validate required environment variables
-      const requiredVars = ['VITE_AWS_REGION', 'VITE_S3_BUCKET_NAME', 'VITE_GOOGLE_CLIENT_ID'];
+      const requiredVars = [
+        'VITE_AWS_REGION',
+        'VITE_S3_BUCKET_NAME',
+        'VITE_GOOGLE_CLIENT_ID',
+        'VITE_AWS_ACCESS_KEY_ID',
+        'VITE_AWS_SECRET_ACCESS_KEY'
+      ];
       const missingVars = requiredVars.filter(varName => !data[varName]);
       
       if (missingVars.length > 0) {
         console.error('Missing required environment variables:', missingVars);
-        throw new Error('Missing required environment variables');
+        throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
       }
 
       runtimeEnv = data as AppRuntimeEnv;
@@ -41,7 +49,7 @@ async function fetchRuntimeEnvFromServer(): Promise<AppRuntimeEnv> {
     })
     .catch(error => {
       console.error("Error fetching runtime environment variables:", error);
-      throw error; // Propagate error instead of returning empty object
+      throw error;
     })
     .finally(() => {
       fetchPromise = null;
