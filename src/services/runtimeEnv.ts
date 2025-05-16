@@ -1,8 +1,7 @@
 interface AppRuntimeEnv {
   VITE_AWS_REGION?: string;
   VITE_S3_BUCKET_NAME?: string;
-  VITE_AWS_ACCESS_KEY_ID?: string;
-  VITE_AWS_SECRET_ACCESS_KEY?: string;
+  VITE_GOOGLE_CLIENT_ID?: string;
   // Define other environment variables that the frontend will fetch
 }
 
@@ -17,11 +16,10 @@ async function fetchRuntimeEnvFromServer(): Promise<AppRuntimeEnv> {
     return fetchPromise;
   }
 
-  // Assuming your presign-server.js is running on port 3001 and accessible.
-  // Adjust the URL if your backend server is hosted elsewhere during development/production.
-  const backendUrl = import.meta.env.DEV ? 'http://localhost:3001' : ''; // Adjust for production
+  // Use the API endpoint which will be proxied appropriately
+  const apiEndpoint = '/api/runtime-env';
 
-  fetchPromise = fetch(`${backendUrl}/api/runtime-env`)
+  fetchPromise = fetch(apiEndpoint)
     .then(response => {
       if (!response.ok) {
         throw new Error(`Failed to fetch runtime environment variables: ${response.statusText}`);
@@ -29,14 +27,21 @@ async function fetchRuntimeEnvFromServer(): Promise<AppRuntimeEnv> {
       return response.json();
     })
     .then(data => {
+      // Validate required environment variables
+      const requiredVars = ['VITE_AWS_REGION', 'VITE_S3_BUCKET_NAME', 'VITE_GOOGLE_CLIENT_ID'];
+      const missingVars = requiredVars.filter(varName => !data[varName]);
+      
+      if (missingVars.length > 0) {
+        console.error('Missing required environment variables:', missingVars);
+        throw new Error('Missing required environment variables');
+      }
+
       runtimeEnv = data as AppRuntimeEnv;
       return runtimeEnv!;
     })
     .catch(error => {
       console.error("Error fetching runtime environment variables:", error);
-      // Fallback to an empty object or default configuration on error
-      runtimeEnv = {}; 
-      return runtimeEnv;
+      throw error; // Propagate error instead of returning empty object
     })
     .finally(() => {
       fetchPromise = null;
@@ -49,7 +54,12 @@ async function fetchRuntimeEnvFromServer(): Promise<AppRuntimeEnv> {
  * Fetches from the server on first call and caches the result.
  */
 export async function getRuntimeEnv(): Promise<AppRuntimeEnv> {
-  return runtimeEnv ? Promise.resolve(runtimeEnv) : fetchRuntimeEnvFromServer();
+  try {
+    return await fetchRuntimeEnvFromServer();
+  } catch (error) {
+    console.error('Failed to get runtime environment:', error);
+    throw error;
+  }
 }
 
 /**

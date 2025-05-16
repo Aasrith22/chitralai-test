@@ -3,9 +3,10 @@ import react from '@vitejs/plugin-react';
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
 import rollupNodePolyFill from 'rollup-plugin-node-polyfills';
+import type { UserConfig } from 'vite';
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode }): UserConfig => {
   // Load env file based on mode (e.g., .env.development, .env.production)
   // and .env as a fallback. process.cwd() is the project root.
   // The third argument '' means all env variables are loaded, regardless of VITE_ prefix.
@@ -50,8 +51,9 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       rollupOptions: {
-        plugins: [rollupNodePolyFill]
-      }
+        plugins: [rollupNodePolyFill() as any]
+      },
+      sourcemap: true
     },
     define: {
       'process.env': {},
@@ -62,7 +64,12 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       proxy: {
-        '/api': 'http://localhost:3001',
+        '/api': {
+          target: mode === 'development' ? 'http://localhost:3001' : '/.netlify/functions',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/api/, '')
+        },
       },
     },
   };

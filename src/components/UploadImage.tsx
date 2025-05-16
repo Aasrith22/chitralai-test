@@ -6,6 +6,14 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getUserEvents, getEventById, updateEventData } from '../config/eventStorage';
 
+// Add type declaration for directory upload attributes
+declare module 'react' {
+  interface InputHTMLAttributes<T> extends HTMLAttributes<T> {
+    webkitdirectory?: string;
+    directory?: string;
+  }
+}
+
 const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB
 const BATCH_SIZE = 10; // Increased for faster processing
 const IMAGES_PER_PAGE = 20;
@@ -85,7 +93,7 @@ const pollForCompressedImage = async (bucketUrl: string, compressedKey: string, 
 
 // Add this helper function for getting a pre-signed URL
 const getPresignedUrl = async (key: string, contentType: string): Promise<string> => {
-  const response = await fetch('http://localhost:3001/api/presign', {
+  const response = await fetch('/api/presign', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ key, contentType })
@@ -951,37 +959,50 @@ const UploadImage = () => {
               ) : isAuthorized === true ? (
                 <>
                   <div className="space-y-4">
-                    {/* Upload Type Selection */}
-                    <select
-                      value={uploadType}
-                      onChange={(e) => setUploadType(e.target.value as 'folder' | 'photos')}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white"
-                    >
-                      <option value="photos">Upload Photos</option>
-                      <option value="folder">Upload Folder</option>
-                    </select>
-
-                    {/* Combined Upload Button */}
-                    <label
-                      htmlFor="file-upload"
-                      className="w-full flex flex-col items-center px-4 py-6 bg-blue-100 rounded-lg border-2 border-turquoise border-dashed cursor-pointer hover:border-blue-300 hover:bg-champagne transition-colors duration-200"
-                    >
-                      <div className="flex flex-col items-center">
-                        <img src="/upload-placeholder.svg" alt="Upload" className="w-full h-24 sm:h-32 md:h-36 object-contain" />
-                        <p className="text-xs text-blue-500 mt-1">
-                          {uploadType === 'folder' ? 'Select a folder to upload' : 'PNG, JPEG, JPG (200MB max)'}
-                        </p>
+                    {/* Upload Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+                      {/* Upload Photos Button */}
+                      <div className="relative w-full sm:w-1/2">
+                        <input
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="hidden"
+                          id="photo-upload"
+                          disabled={!isAuthorized || isUploading}
+                        />
+                        <label
+                          htmlFor="photo-upload"
+                          className={`flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full cursor-pointer ${(!isAuthorized || isUploading) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          <UploadIcon className="w-5 h-5 mr-2" />
+                          Upload Photos
+                        </label>
                       </div>
-                      <input
-                        id="file-upload"
-                        type="file"
-                        multiple={uploadType === 'photos'}
-                        className="hidden"
-                        onChange={handleImageChange}
-                        accept="image/*"
-                        {...(uploadType === 'folder' ? { webkitdirectory: '', directory: '' } : {})}
-                      />
-                    </label>
+
+                      {/* Upload Folder Button */}
+                      <div className="relative w-full sm:w-1/2">
+                        <input
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="hidden"
+                          id="folder-upload"
+                          webkitdirectory=""
+                          directory=""
+                          disabled={!isAuthorized || isUploading}
+                        />
+                        <label
+                          htmlFor="folder-upload"
+                          className={`flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-400 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full cursor-pointer ${(!isAuthorized || isUploading) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          <UploadIcon className="w-5 h-5 mr-2" />
+                          Upload Folder
+                        </label>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Responsive file count and size display */}
@@ -1209,7 +1230,11 @@ const compressImage = async (file: File): Promise<Blob> => {
 // Add uploadToS3 function before the UploadImage component
 const uploadToS3 = async (file: File, fileName: string): Promise<string> => {
   const { bucketName } = await validateEnvVariables();
-  const key = `events/shared/${fileName}`;
+  const eventId = localStorage.getItem('currentEventId');
+  if (!eventId) {
+    throw new Error('No event ID found');
+  }
+  const key = `events/shared/${eventId}/images/${fileName}`;
 
   const upload = new Upload({
     client: await s3ClientPromise,
