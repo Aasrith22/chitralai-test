@@ -11,7 +11,9 @@ exports.handler = async function(event, context) {
   const requiredEnvVars = [
     'VITE_AWS_REGION',
     'VITE_S3_BUCKET_NAME',
-    'VITE_GOOGLE_CLIENT_ID'
+    'VITE_GOOGLE_CLIENT_ID',
+    'VITE_AWS_ACCESS_KEY_ID',
+    'VITE_AWS_SECRET_ACCESS_KEY'
   ];
 
   const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
@@ -25,14 +27,19 @@ exports.handler = async function(event, context) {
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'GET'
       },
-      body: JSON.stringify({ error: 'Server configuration error' })
+      body: JSON.stringify({ 
+        error: 'Server configuration error',
+        missingVariables: missingVars
+      })
     };
   }
 
   const runtimeVariables = {
     VITE_AWS_REGION: process.env.VITE_AWS_REGION,
     VITE_S3_BUCKET_NAME: process.env.VITE_S3_BUCKET_NAME,
-    VITE_GOOGLE_CLIENT_ID: process.env.VITE_GOOGLE_CLIENT_ID
+    VITE_GOOGLE_CLIENT_ID: process.env.VITE_GOOGLE_CLIENT_ID,
+    VITE_AWS_ACCESS_KEY_ID: process.env.VITE_AWS_ACCESS_KEY_ID,
+    VITE_AWS_SECRET_ACCESS_KEY: process.env.VITE_AWS_SECRET_ACCESS_KEY
   };
 
   // Log to backend console for debugging (without sensitive info)
@@ -42,7 +49,7 @@ exports.handler = async function(event, context) {
   console.log('[get-runtime-env] Google Client ID configured:', 
     runtimeVariables.VITE_GOOGLE_CLIENT_ID ? 'Yes' : 'No');
   console.log('[get-runtime-env] AWS credentials configured:', 
-    process.env.VITE_AWS_ACCESS_KEY_ID && process.env.VITE_AWS_SECRET_ACCESS_KEY ? 'Yes' : 'No');
+    runtimeVariables.VITE_AWS_ACCESS_KEY_ID && runtimeVariables.VITE_AWS_SECRET_ACCESS_KEY ? 'Yes' : 'No');
 
   return {
     statusCode: 200,
