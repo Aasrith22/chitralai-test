@@ -1,0 +1,79 @@
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#111827" rx="20"/>
+  
+  <!-- Phone Frame -->
+  <rect x="250" y="50" width="300" height="500" rx="30" fill="#1a1a1a" stroke="#000" stroke-width="2"/>
+  <rect x="260" y="60" width="280" height="480" rx="25" fill="#1e293b"/>
+  
+  <!-- Camera UI Elements -->
+  <circle cx="400" cy="85" r="8" fill="#1a1a1a"/>
+  
+  <!-- Face Detection Frame -->
+  <rect x="290" y="120" width="220" height="220" rx="10" fill="#1e293b" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5,5"/>
+  
+  <!-- Face Mesh Points -->
+  <g fill="#3b82f6" opacity="0.8">
+    <!-- Eyes -->
+    <circle cx="350" cy="200" r="3"/>
+    <circle cx="450" cy="200" r="3"/>
+    <!-- Nose -->
+    <circle cx="400" cy="230" r="3"/>
+    <!-- Mouth -->
+    <circle cx="370" cy="270" r="3"/>
+    <circle cx="430" cy="270" r="3"/>
+    <!-- Jaw -->
+    <circle cx="340" cy="290" r="3"/>
+    <circle cx="460" cy="290" r="3"/>
+  </g>
+  
+  <!-- Connecting Lines -->
+  <g stroke="#3b82f6" stroke-width="1" opacity="0.5">
+    <line x1="350" y1="200" x2="450" y2="200"/>
+    <line x1="350" y1="200" x2="400" y2="230"/>
+    <line x1="450" y1="200" x2="400" y2="230"/>
+    <line x1="370" y1="270" x2="430" y2="270"/>
+  </g>
+  
+  <!-- Accuracy Indicator -->
+  <g transform="translate(290, 360)">
+    <rect width="220" height="40" rx="8" fill="#1e293b"/>
+    <text x="20" y="25" font-family="Arial" font-size="14" fill="#3b82f6">Match Accuracy: 99.3%</text>
+  </g>
+  
+  <!-- Photo Grid -->
+  <g transform="translate(290, 420)">
+    <!-- Grid Item 1 -->
+    <g>
+      <rect width="105" height="105" rx="8" fill="#1e293b"/>
+      <circle cx="52.5" cy="52.5" r="35" fill="#3b82f6" opacity="0.2"/>
+      <circle cx="52.5" cy="52.5" r="2" fill="#3b82f6"/>
+      <circle cx="42.5" cy="47.5" r="2" fill="#3b82f6"/>
+      <circle cx="62.5" cy="47.5" r="2" fill="#3b82f6"/>
+      <circle cx="52.5" cy="57.5" r="2" fill="#3b82f6"/>
+    </g>
+    <!-- Grid Item 2 -->
+    <g transform="translate(115, 0)">
+      <rect width="105" height="105" rx="8" fill="#1e293b"/>
+      <circle cx="52.5" cy="52.5" r="35" fill="#3b82f6" opacity="0.2"/>
+      <circle cx="52.5" cy="52.5" r="2" fill="#3b82f6"/>
+      <circle cx="42.5" cy="47.5" r="2" fill="#3b82f6"/>
+      <circle cx="62.5" cy="47.5" r="2" fill="#3b82f6"/>
+      <circle cx="52.5" cy="57.5" r="2" fill="#3b82f6"/>
+    </g>
+  </g>
+  
+  <!-- AI Processing Indicators -->
+  <g transform="translate(320, 180)">
+    <text font-family="Arial" font-size="12" fill="#94a3b8">Processing...</text>
+    <rect x="-10" y="15" width="160" height="4" rx="2" fill="#1e293b"/>
+    <rect x="-10" y="15" width="120" height="4" rx="2" fill="#3b82f6">
+      <animate attributeName="width" values="0;120" dur="2s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  
+  <!-- Animated Scanning Effect -->
+  <rect x="290" y="120" width="220" height="4" fill="#3b82f6" opacity="0.5">
+    <animate attributeName="y" values="120;340;120" dur="3s" repeatCount="indefinite"/>
+  </rect>
+</svg>

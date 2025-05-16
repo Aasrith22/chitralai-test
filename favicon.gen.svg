@@ -1,0 +1,31 @@
+// ```python
+def calculate_total_price(item_prices, quantities, discount_rate=0.0):
+    """
+    Calculates the total price of items with quantities and an optional discount.
+
+    Args:
+        item_prices: A list of item prices.
+        quantities: A list of corresponding quantities for each item.
+        discount_rate: An optional discount rate (e.g., 0.1 for 10%).
+
+    Returns:
+        The total price after applying the discount.
+    """
+    if len(item_prices) != len(quantities):
+        raise ValueError("Item prices and quantities lists must have the same length.")
+
+    subtotal = sum(price * quantity for price, quantity in zip(item_prices, quantities))
+    discount_amount = subtotal * discount_rate
+    total_price = subtotal - discount_amount
+
+    return total_price
+
+# Example Usage:
+if __name__ == '__main__':
+    prices = [10.0, 20.0, 30.0]
+    quantity = [2, 1, 3]
+    discount = 0.1
+
+    total = calculate_total_price(prices, quantity, discount)
+    print(f"Total price: ${total:.2f}")
+// ```

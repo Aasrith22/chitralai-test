@@ -1,0 +1,11 @@
+{
+    "CORSRules": [
+        {
+            "AllowedHeaders": ["*"],
+            "AllowedMethods": ["GET", "PUT", "POST", "DELETE", "HEAD", "OPTIONS"],
+            "AllowedOrigins": ["http://localhost:5173", "http://127.0.0.1:5173", "https://*.netlify.app", "https://*.amazonaws.com", "https://3dprinting.space", "https://main.d2egbkasraqmnr.amplifyapp.com"],
+            "ExposeHeaders": ["ETag", "x-amz-server-side-encryption", "x-amz-request-id", "x-amz-id-2"],
+            "MaxAgeSeconds": 3000
+        }
+    ]
+}
