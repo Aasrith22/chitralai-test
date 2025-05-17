@@ -115,6 +115,7 @@ const AttendeeDashboard: React.FC<AttendeeDashboardProps> = ({ setShowSignInModa
     const searchParams = new URLSearchParams(location.search);
     const eventIdFromUrl = searchParams.get('eventId');
     
+    // If user is not logged in and there's an event ID, show sign-in modal
     if (!userEmail) {
       if (eventIdFromUrl) {
         // Store information for redirect after login
@@ -142,7 +143,7 @@ const AttendeeDashboard: React.FC<AttendeeDashboardProps> = ({ setShowSignInModa
           setProcessingStatus(null);
         });
       }
-      // Always show sign in modal if not signed in
+      // Show sign in modal
       setShowSignInModal(true);
     }
   }, []); // Empty dependency array ensures this runs only once on mount
