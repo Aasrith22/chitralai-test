@@ -16,7 +16,6 @@ import AttendeeDashboard from './components/AttendeeDashboard';
 import EventPhotos from './components/EventPhotos';
 import MyPhotos from './components/MyPhotos';
 import MyOrganizations from './components/MyOrganizations';
-import { GoogleAuthConfig } from './config/GoogleAuthConfig';
 import { queryUserByEmail, storeUserCredentials } from './config/dynamodb';
 import { migrateLocalStorageToDb } from './config/eventStorage';
 import Login from './components/Login';
