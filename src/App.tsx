@@ -114,8 +114,8 @@ const App = () => {
 
   return (
     <UserContext.Provider value={{ userEmail, userRole, setUserEmail, setUserRole }}>
-      {showSignInModal && <Login />}
       <Router>
+      {showSignInModal && <Login />}
         <div className="min-h-screen bg-white">
           {showNavbar && (
             <Navbar
