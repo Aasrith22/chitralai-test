@@ -1,5 +1,5 @@
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
-import { googleAuthDocClientPromise } from './GoogleAuthConfig';
+import { googleAuthDocClientPromise } from './GoogleAuthConfigDynamo';
 
 // Define the Events table name
 const EVENTS_TABLE = 'Events';
