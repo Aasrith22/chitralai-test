@@ -19,6 +19,7 @@ import MyOrganizations from './components/MyOrganizations';
 import { GoogleAuthConfig } from './config/GoogleAuthConfig';
 import { queryUserByEmail, storeUserCredentials } from './config/dynamodb';
 import { migrateLocalStorageToDb } from './config/eventStorage';
+import Login from './components/Login';
 
 // Create a user context to manage authentication state
 export const UserContext = createContext<{
@@ -113,6 +114,7 @@ const App = () => {
 
   return (
     <UserContext.Provider value={{ userEmail, userRole, setUserEmail, setUserRole }}>
+      {showSignInModal && <Login />}
       <Router>
         <div className="min-h-screen bg-white">
           {showNavbar && (
